@@ -16,7 +16,7 @@ img{
   height: 250px;
 }
 
-.Introduction {
+.Introduction,footer {
   margin: 12px;
   padding: 4px;
 }
