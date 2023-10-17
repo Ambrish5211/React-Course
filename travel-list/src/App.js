@@ -8,11 +8,18 @@ function App() {
     setItems((items) => items.filter((item) => item.id !== id))
   }
 
+  function handleChecked(id) {
+   setItems((items) =>
+    items.map((item) => 
+    item.id === id ? {...item, packed : !item.packed} : item
+   ))
+  }
+
   return (
     <div className="app">
       <Logo />
       <Form setItems={setItems} />
-      <PackingList items={items} onDelete={handleDelete}/>
+      <PackingList items={items} onDelete={handleDelete} onChecked={handleChecked} />
       <Stats />
     </div>
   );
@@ -67,21 +74,23 @@ function Form({ setItems }) {
   );
 }
 
-function PackingList({ items, onDelete }) {
+function PackingList({ items, onDelete, onChecked }) {
   return (
     <div className="list">
       <ul>
         {items.map((list) => {
-          return <List list={list} onDelete={onDelete} key={list.id}/>;
+          return <List list={list} onDelete={onDelete} onChecked={onChecked} key={list.id}/>;
         })}
       </ul>
     </div>
   );
 }
 
-function List({ list, onDelete }) {
+function List({ list, onDelete, onChecked }) {
   return (
     <li>
+      <input type="checkbox" input={list.packed} onChange={()=> onChecked(list.id)}></input>
+     
       <span style={list.packed ? { textDecoration: "line-through" } : {}}>
         {list.quantity} {list.description}
       </span>
