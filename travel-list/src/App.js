@@ -75,13 +75,31 @@ function Form({ setItems }) {
 }
 
 function PackingList({ items, onDelete, onChecked }) {
+
+    const [sortBy, setSortBy] = useState("input")
+
+    let sortedItems;
+
+    if(sortBy === "input") sortedItems = items;
+    else if(sortBy === "description") sortedItems = 
+
   return (
     <div className="list">
       <ul>
-        {items.map((list) => {
+        {sortedItems.map((list) => {
           return <List list={list} onDelete={onDelete} onChecked={onChecked} key={list.id}/>;
         })}
       </ul>
+
+        <div className="actions">
+          <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
+            <option value="input">Sort by input order </option>
+            <option value="description">Sort by description order </option>
+            <option value="packed">Sort by packed order </option>
+          </select>
+
+        </div>
+
     </div>
   );
 }
