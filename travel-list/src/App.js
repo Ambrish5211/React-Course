@@ -20,7 +20,7 @@ function App() {
       <Logo />
       <Form setItems={setItems} />
       <PackingList items={items} onDelete={handleDelete} onChecked={handleChecked} />
-      <Stats />
+      <Stats items={items} />
     </div>
   );
 }
@@ -99,10 +99,14 @@ function List({ list, onDelete, onChecked }) {
   );
 }
 
-function Stats() {
+function Stats({items}) {
+  const x= items.length;
+  const y = items.filter((item)=> item.packed === true).length;
+  const percentage = (Math.floor(y/x*100))
   return (
     <footer className="stats">
-      <em>💼 You have X element in your list, and you already packed X. </em>
+      {percentage === 100 ? <em>All done. You are ready to go.✈</em> : <em>💼 You have {x} element in your list, and you already packed {y} {x === 0 ?  "(0 %)" : `(${percentage}%)` } </em>}
+      
     </footer>
   );
 }
