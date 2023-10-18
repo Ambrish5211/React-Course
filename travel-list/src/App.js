@@ -17,8 +17,9 @@ function App() {
   }
 
   function handleClearList() {
-    setItems(() => setItems([]));
+    const confirmed = window.confirm("Are you sure you want to delete all ? ");
 
+    confirmed && setItems([]);
   }
 
   return (
@@ -125,8 +126,6 @@ function PackingList({ items, onDelete, onChecked, onClearList }) {
 
         <button onClick={onClearList}>Clear List</button>
       </div>
-
-      
     </div>
   );
 }
