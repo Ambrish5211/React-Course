@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 const initialFriends = [
   {
     id: 118836,
@@ -18,3 +20,71 @@ const initialFriends = [
     balance: 0,
   },
 ];
+
+function App() {
+  const [showForm, setShowForm] = useState(false)
+  return (
+    <div className="app">
+      <div className="sidebar">
+        <FriendList />
+        {showForm ? <FormsAddFriend /> : ''}
+        <Button showForm={showForm} setShowForm={setShowForm} >{showForm ? "Close" : "Add Friend"}</Button>
+      </div>
+    </div>
+  );
+}
+
+function FriendList() {
+  const friend = initialFriends;
+
+  return (
+    <ul>
+      {friend.map((friend) => (
+        <Friend friend={friend} key={friend.id} />
+      ))}
+    </ul>
+  );
+}
+
+function Friend({ friend }) {
+  return (
+    <li>
+      <img src={friend.image} alt={friend.name} />
+      <h3>{friend.name}</h3>
+
+      {friend.balance > 0 && (
+        <p className="green">
+          {friend.name} owe you {friend.balance}
+        </p>
+      )}
+      {friend.balance < 0 && (
+        <p className="red">
+          You owe {friend.name} {Math.abs(friend.balance)}
+        </p>
+      )}
+      {friend.balance === 0 && <p>You and {friend.name} are even </p>}
+
+      <Button>Select</Button>
+    </li>
+  );
+}
+
+function FormsAddFriend() {
+  return (
+    <form className="form-add-friend">
+      <label>🤼Name</label>
+      <input type="text"></input>
+
+      <label>🖼Image url</label>
+      <input type="text"></input>
+
+      <Button>Add</Button>
+    </form>
+  );
+}
+
+function Button({ children, showForm, setShowForm }) {
+  return <button onClick={() => setShowForm(!showForm)} className="button">{children}</button>;
+}
+
+export default App;
