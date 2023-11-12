@@ -1,5 +1,6 @@
 /* eslint-disable no-unused-vars */
 import { useEffect, useState } from "react";
+import StarRating from "./StarRating";
 
 const tempMovieData = [
   {
@@ -56,41 +57,42 @@ export default function App() {
   const [movies, setMovies] = useState([]);
   const [watched, setWatched] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState('')
-  const [selectedId, setselectedeId] = useState(null)
+  const [error, setError] = useState("");
+  const [selectedId, setselectedeId] = useState(null);
 
   function handleSelectMovie(id) {
     setselectedeId(id);
   }
 
   function onCloseMovie() {
-    setselectedeId(null)
+    setselectedeId(null);
   }
 
-  useEffect(function () {
-    async function fetchMovies() {
-      try {
-        setIsLoading(true);
-        setError("");
-        const res = await fetch(
-          `http://www.omdbapi.com/?i=tt3896198&apikey=509ad598&s=${query}`
-        );
-        if (!res.ok) throw new Error("Something went wrong with fetching ");
-        
-        const data = await res.json();
-        if (data.Response === "False") throw new Error("Movies not found");
-        setMovies(data.Search);
-       
-      } catch (err) {
+  useEffect(
+    function () {
+      async function fetchMovies() {
+        try {
+          setIsLoading(true);
+          setError("");
+          const res = await fetch(
+            `http://www.omdbapi.com/?i=tt3896198&apikey=509ad598&s=${query}`
+          );
+          if (!res.ok) throw new Error("Something went wrong with fetching ");
 
-        setError(err.message || 'An error occured')
-        console.log(err.message)
-      } finally {
-        setIsLoading(false);
+          const data = await res.json();
+          if (data.Response === "False") throw new Error("Movies not found");
+          setMovies(data.Search);
+        } catch (err) {
+          setError(err.message || "An error occured");
+          console.log(err.message);
+        } finally {
+          setIsLoading(false);
+        }
       }
-    }
-    fetchMovies();
-  }, [query]);
+      fetchMovies();
+    },
+    [query]
+  );
 
   return (
     <>
@@ -103,12 +105,20 @@ export default function App() {
       <Main>
         <Box>
           {isLoading && <Loader />}
-          {!isLoading && !error && <MoviesList movies={movies} handleSelectMovie={handleSelectMovie}/>}
+          {!isLoading && !error && (
+            <MoviesList movies={movies} handleSelectMovie={handleSelectMovie} />
+          )}
           {error && <Error message={error} />}
         </Box>
         <Box>
-          {selectedId ? <MovieDetails selectedId={selectedId} onCloseMovie={onCloseMovie}  /> : <><Summary watched={watched} />
-          <WatchedMoviesList watched={watched}  /> </>}
+          {selectedId ? (
+            <MovieDetails selectedId={selectedId} onCloseMovie={onCloseMovie} />
+          ) : (
+            <>
+              <Summary watched={watched} />
+              <WatchedMoviesList watched={watched} />{" "}
+            </>
+          )}
         </Box>
       </Main>
     </>
@@ -119,14 +129,11 @@ function Loader() {
   return <p className="loader">Loading...</p>;
 }
 
-function Error({message}) {
-  return <p className="error">
-    🔴 {message}
-  </p>
+function Error({ message }) {
+  return <p className="error">🔴 {message}</p>;
 }
 
-function Search({query, setQuery}) {
-
+function Search({ query, setQuery }) {
   return (
     <input
       className="search"
@@ -178,9 +185,13 @@ function Box({ children }) {
 
 function MoviesList({ movies, handleSelectMovie }) {
   return (
-    <ul className="list list-movies" >
+    <ul className="list list-movies">
       {movies?.map((movie) => (
-        <Movie movie={movie} key={movie.imdbID} handleSelectMovie={handleSelectMovie} />
+        <Movie
+          movie={movie}
+          key={movie.imdbID}
+          handleSelectMovie={handleSelectMovie}
+        />
       ))}
     </ul>
   );
@@ -201,13 +212,66 @@ function Movie({ movie, handleSelectMovie }) {
   );
 }
 
-function MovieDetails({selectedId, onCloseMovie}){
+function MovieDetails({ selectedId, onCloseMovie }) {
+  const [movie, setMovie] = useState({});
+  const {
+    Title: title,
+    Year: year,
+    Poster: poster,
+    Runtime: runtime,
+    imdbRating,
+    Plot: plot,
+    Actors: actor,
+    Director: director,
+    Genre: genre,
+    Released: released,
+  } = movie;
+
+  useEffect(function () {
+    async function getMovieDetails() {
+      const res = await fetch(
+        `http://www.omdbapi.com/?i=tt3896198&apikey=509ad598&i=${selectedId}`
+      );
+      const data = await res.json();
+      console.log(data)
+      setMovie(data);
+      console.log(movie)
+    }
+    getMovieDetails();
+  }, []);
+
   return (
     <div className="details">
-      <button className="btn-back" onClick={onCloseMovie}>&larr;</button>
-      {selectedId}
+      <header>
+        <button className="btn-back" onClick={onCloseMovie}>
+          &larr;
+        </button>
+        <img src={poster} alt={`Poster of ${movie}`} />
+        <div className="details-overview">
+          <h2>{title}</h2>
+          <p>
+            {released} &bull; {runtime}
+          </p>
+          <p>{genre}</p>
+          <p>
+            <span>⭐</span>
+            {imdbRating}IMDb Rating
+          </p>
+        </div>
+      </header>
+
+      <StarRating maxRating={10} size={24} />
+
+      <section>
+        <p>
+          <en>{plot}</en>
+        </p>
+        <p>Starring {actor}</p>
+        <p>Directed by {director}</p>
+      </section>
+    
     </div>
-  )
+  );
 }
 
 function Summary({ watched }) {
