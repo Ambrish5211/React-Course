@@ -34,7 +34,7 @@ export default function Login() {
         </div>
 
         <div>
-          <Link to="/app" ><button className="btn">Login</button>
+          <Link to="/app"><button className="btn">Login</button>
 </Link>
         </div>
       </form>
