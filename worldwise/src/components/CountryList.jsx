@@ -5,7 +5,7 @@ import CountryItem from './CountryItem.jsx'
 import Message from './Message.jsx'
 import { useCities } from '../contexts/CitiesContext.jsx'
 
-export default function CountryList({ cities, isLoading}) {
+export default function CountryList() {
 
   const {cities, isLoading} = useCities();
   if(isLoading) return <Spinner />
