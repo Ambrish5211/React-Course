@@ -7,6 +7,7 @@ const rootReducer = combineReducers({
   accountStore: accountReducer,
   customerStore: customerReducer,
 });
+
 const store = createStore(rootReducer, applyMiddleware(thunk));
 
 export default store;
